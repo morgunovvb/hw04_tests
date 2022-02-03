@@ -10,15 +10,11 @@ from django.urls import reverse
 from posts.forms import PostForm
 from posts.models import Group, Post
 
-# Создаем временную папку для медиа-файлов;
-# на момент теста медиа папка будет переопределена
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 User = get_user_model()
 
 
-# Для сохранения media-файлов в тестах будет использоваться
-# временная папка TEMP_MEDIA_ROOT, а потом мы ее удалим
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class FormsTests(TestCase):
 
@@ -44,20 +40,18 @@ class FormsTests(TestCase):
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
-        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
     def test_create_post(self):
         posts_count = Post.objects.count()
-        date_dir = {
+        date = {
             'text': 'second post',
-            'author': self.user.username,
             'group': self.group.id
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'),
-            data=date_dir,
+            data=date,
             follow=True
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -67,21 +61,20 @@ class FormsTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(
             Post.objects.filter(
-                text=date_dir['text'],
-                group=date_dir['group']
-            ).exists()
+                text=date['text'],
+                group=date['group']
+            ).latest('id')
         )
 
     def test_edit_post(self):
         posts_count = Post.objects.count()
-        date_dir = {
+        date = {
             'text': 'second post',
-            'author': self.user.username,
             'group': self.group.id
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': self.post.id}),
-            data=date_dir,
+            data=date,
             follow=True
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -91,7 +84,7 @@ class FormsTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count)
         self.assertTrue(
             Post.objects.filter(
-                text=date_dir['text'],
-                group=date_dir['group']
-            ).exists()
+                text=date['text'],
+                group=date['group']
+            ).latest('id')
         )

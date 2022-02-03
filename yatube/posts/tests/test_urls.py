@@ -26,7 +26,6 @@ class UrlsTests(TestCase):
         )
 
     def setUp(self):
-        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -39,19 +38,19 @@ class UrlsTests(TestCase):
         }
         for adress in url_names:
             with self.subTest(adress=adress):
-                response = self.guest_client.get(adress)
+                response = self.client.get(adress)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_correct_template(self):
         template_and_urls = {
             'posts/index.html': '/',
-            'posts/group_list.html': '/group/Test/',
-            'posts/profile.html': '/profile/user/',
+            'posts/group_list.html': f'/group/{self.group.slug}/',
+            'posts/profile.html': f'/profile/{self.user.username}/',
             'posts/post_detail.html': f'/posts/{self.post.id}/'
         }
         for template, adress in template_and_urls.items():
             with self.subTest(adress=adress):
-                response = self.guest_client.get(adress)
+                response = self.client.get(adress)
                 self.assertTemplateUsed(response, template)
 
     def test_correct_template_by_owner(self):
