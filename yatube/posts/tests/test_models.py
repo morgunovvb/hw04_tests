@@ -23,7 +23,6 @@ class PostModelTest(TestCase):
             group=cls.group
         )
 
-
     def test_models_have_correct_object_names(self):
         post = PostModelTest.post
         group = PostModelTest.group
