@@ -32,8 +32,8 @@ class UrlsTests(TestCase):
     def test_urls_by_all(self):
         url_names = {
             '/',
-            '/group/Test/',
-            '/profile/user/',
+            f'/group/{self.group.slug}/',
+            f'/profile/{self.user.username}/',
             f'/posts/{self.post.id}/'
         }
         for adress in url_names:
