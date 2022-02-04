@@ -94,9 +94,9 @@ class PaginatorViewsTest(TestCase):
 
     def setUp(self):
         self.count_posts = 13
-        for b in range(self.count_posts):
+        for post_on_page in range(self.count_posts):
             self.post = Post.objects.create(
-                text='Тестовый текст %s' % b,
+                text='Тестовый текст %s' % post_on_page,
                 author=self.user,
                 group=self.group,
             )
@@ -112,7 +112,7 @@ class PaginatorViewsTest(TestCase):
             reverse('posts:index') + '?page=2'
         )
         self.assertTrue(len(
-            response.context['page_obj']) <= PAGINATOR_CONST
+            response.context['page_obj']) == 3
         )
 
     def test_first_group_contains_ten_records(self):
@@ -126,7 +126,7 @@ class PaginatorViewsTest(TestCase):
             'posts:group', kwargs={'slug': self.group.slug}
         ) + '?page=2')
         self.assertTrue(len(
-            response.context['page_obj']) <= PAGINATOR_CONST
+            response.context['page_obj']) == 3
         )
 
     def test_first_profile_contains_ten_records(self):
@@ -140,5 +140,5 @@ class PaginatorViewsTest(TestCase):
             'posts:profile', kwargs={'username': self.user}
         ) + '?page=2')
         self.assertTrue(len(
-            response.context['page_obj']) <= PAGINATOR_CONST
+            response.context['page_obj']) == 3
         )
