@@ -1,7 +1,5 @@
-from http import HTTPStatus
-
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import TestCase
 
 from posts.models import Group, Post
 
@@ -24,7 +22,6 @@ class PostModelTest(TestCase):
             author=cls.user,
             group=cls.group
         )
-
 
     def test_models_have_correct_object_names(self):
         """Проверяем, что у постов корректно работает __str__"""
