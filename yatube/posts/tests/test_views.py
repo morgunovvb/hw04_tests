@@ -141,4 +141,3 @@ class PaginatorViewsTest(TestCase):
         ) + '?page=2')
         self.assertTrue(len(
             response.context['page_obj']) <= PAGINATOR_CONST
-        )
