@@ -45,46 +45,44 @@ class FormsTests(TestCase):
 
     def test_create_post(self):
         posts_count = Post.objects.count()
-        date = {
-            'text': 'second post',
+        data = {
+            'text': 'Hello',
             'group': self.group.id
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'),
-            data=date,
+            data=data,
             follow=True
         )
+        post = Post.objects.all().latest('id')
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertRedirects(response, reverse(
             'posts:profile', kwargs={'username': self.user.username})
         )
         self.assertEqual(Post.objects.count(), posts_count + 1)
+        self.assertEqual(data['text'], post.text)
         self.assertTrue(
             Post.objects.filter(
-                text=date['text'],
-                group=date['group']
+                text=data['text'],
+                group=data['group']
             ).latest('id')
         )
 
     def test_edit_post(self):
         posts_count = Post.objects.count()
-        date = {
-            'text': 'second post',
+        data = {
+            'text': 'hi',
             'group': self.group.id
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': self.post.id}),
-            data=date,
+            data=data,
             follow=True
         )
+        post = Post.objects.all().latest('id')
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': self.post.id})
         )
         self.assertEqual(Post.objects.count(), posts_count)
-        self.assertTrue(
-            Post.objects.filter(
-                text=date['text'],
-                group=date['group']
-            ).latest('id')
-        )
+        self.assertEqual(data['text'], post.text)
