@@ -111,8 +111,8 @@ class PaginatorViewsTest(TestCase):
         response = self.authorized_client.get(
             reverse('posts:index') + '?page=2'
         )
-        self.assertTrue(len(
-            response.context['page_obj']) == 3
+        self.assertEqual(len(
+            response.context['page_obj']), (self.count_posts % PAGINATOR_CONST)
         )
 
     def test_first_group_contains_ten_records(self):
@@ -125,8 +125,8 @@ class PaginatorViewsTest(TestCase):
         response = self.authorized_client.get(reverse(
             'posts:group', kwargs={'slug': self.group.slug}
         ) + '?page=2')
-        self.assertTrue(len(
-            response.context['page_obj']) == 3
+        self.assertEqual(len(
+            response.context['page_obj']), (self.count_posts % PAGINATOR_CONST)
         )
 
     def test_first_profile_contains_ten_records(self):
@@ -139,6 +139,6 @@ class PaginatorViewsTest(TestCase):
         response = self.authorized_client.get(reverse(
             'posts:profile', kwargs={'username': self.user}
         ) + '?page=2')
-        self.assertTrue(len(
-            response.context['page_obj']) == 3
+        self.assertEqual(len(
+            response.context['page_obj']), (self.count_posts % PAGINATOR_CONST)
         )

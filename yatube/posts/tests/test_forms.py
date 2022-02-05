@@ -61,12 +61,7 @@ class FormsTests(TestCase):
         )
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertEqual(data['text'], post.text)
-        self.assertTrue(
-            Post.objects.filter(
-                text=data['text'],
-                group=data['group']
-            ).latest('id')
-        )
+        self.assertEqual(data['group'], self.group.id)
 
     def test_edit_post(self):
         posts_count = Post.objects.count()
@@ -79,10 +74,11 @@ class FormsTests(TestCase):
             data=data,
             follow=True
         )
-        post = Post.objects.all().latest('id')
+        post = Post.objects.get(id=self.post.id)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': self.post.id})
         )
         self.assertEqual(Post.objects.count(), posts_count)
         self.assertEqual(data['text'], post.text)
+        self.assertEqual(data['group'], self.group.id)
